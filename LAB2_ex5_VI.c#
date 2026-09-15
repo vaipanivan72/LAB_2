@@ -1,0 +1,107 @@
+using System;
+namespace Lab2Task5
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            int n = GetValidInt("Введіть кількість рядків n (> 0): ", 1, 100);
+            int m = GetValidInt("Введіть кількість стовпців m (> 0): ", 1, 100);
+
+            int[,] A = new int[n, m];
+
+            int choice = GetValidInt("\nОберіть спосіб заповнення (1 - з клавіатури, 2 - випадковими числами): ", 1, 2);
+
+            if (choice == 1)
+            {
+                FillFromKeyboard(A, n, m);
+            }
+            else
+            {
+                FillRandomly(A, n, m);
+            }
+
+            // Виведення початкової матриці
+            PrintMatrix(A, n, m);
+
+            // Знаходження суми найбільших елементів для кожного рядка
+            int totalSum = 0;
+            Console.WriteLine("\n--- Проміжні результати (максимуми в кожному рядку) ---");
+            for (int i = 0; i < n; i++)
+            {
+                int maxInRow = A[i, 0];
+                for (int j = 1; j < m; j++)
+                {
+                    if (A[i, j] > maxInRow)
+                    {
+                        maxInRow = A[i, j];
+                    }
+                }
+                Console.WriteLine($"Рядок {i + 1}: найбільший елемент = {maxInRow}");
+                totalSum += maxInRow;
+            }
+
+            // Кінцевий результат
+            Console.WriteLine("\n--- Кінцевий результат ---");
+            Console.WriteLine($"Сума найбільших елементів усіх рядків: {totalSum}");
+
+            Console.ReadKey();
+        }
+
+        // Заповнення з клавіатури із перевіркою типу даних
+        static void FillFromKeyboard(int[,] A, int n, int m)
+        {
+            Console.WriteLine("\nВведіть цілі числа для елементів матриці:");
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    A[i, j] = GetValidInt($"Елемент [{i + 1}, {j + 1}]: ", int.MinValue, int.MaxValue);
+                }
+            }
+        }
+
+        // Заповнення випадковими числами з відрізка [-100; 100]
+        static void FillRandomly(int[,] A, int n, int m)
+        {
+            Random rnd = new Random(); // використання класу Random
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    A[i, j] = rnd.Next(-100, 101); // діапазон [-100; 100]
+                }
+            }
+        }
+
+        // Красиве виведення двовимірного масиву у вигляді таблиці
+        static void PrintMatrix(int[,] A, int n, int m)
+        {
+            Console.WriteLine("\n--- Початкова матриця A ---");
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    Console.Write($"{A[i, j],7}");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        // Валідатор введення цілих чисел з клавіатури
+        static int GetValidInt(string prompt, int min, int max)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (int.TryParse(Console.ReadLine(), out int result) && result >= min && result <= max)
+                {
+                    return result;
+                }
+                Console.WriteLine("Помилка: введено некоректне значення або число поза допустимим діапазоном.");
+            }
+        }
+    }
+}

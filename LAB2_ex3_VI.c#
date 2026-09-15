@@ -1,0 +1,155 @@
+using System;
+
+namespace Lab2Task3
+{
+    // Клас для обробки масиву (ООП підхід)
+    class ArrayProcessor
+    {
+        private int[] data;
+
+        public ArrayProcessor(int n)
+        {
+            data = new int[n];
+        }
+
+        // А) Заповнення масиву з клавіатури із захистом від некоректного введення
+        public void FillFromKeyboard()
+        {
+            Console.WriteLine("Введіть елементи масиву:");
+            for (int i = 0; i < data.Length; i++)
+            {
+                while (true)
+                {
+                    Console.Write($"Елемент [{i}]: ");
+                    if (int.TryParse(Console.ReadLine(), out int value))
+                    {
+                        data[i] = value;
+                        break;
+                    }
+                    Console.WriteLine("Помилка: введено некоректні дані. Введіть ціле число.");
+                }
+            }
+        }
+
+        // Б) Заповнення масиву випадковими числами
+        public void FillRandomly()
+        {
+            Random rnd = new Random();
+            for (int i = 0; i < data.Length; i++)
+            {
+                // Генерація в діапазоні [-100; 100]
+                data[i] = rnd.Next(-100, 101);
+            }
+        }
+
+        public void PrintArray()
+        {
+            Console.WriteLine("Масив: " + string.Join(", ", data));
+        }
+
+        // 1. Знаходження номера (індексу) максимального елемента
+        public int GetMaxElementIndex()
+        {
+            if (data.Length == 0) return -1;
+
+            int maxIndex = 0;
+            for (int i = 1; i < data.Length; i++)
+            {
+                if (data[i] > data[maxIndex])
+                {
+                    maxIndex = i;
+                }
+            }
+            return maxIndex;
+        }
+
+        // 2. Знаходження суми модулів елементів між першим і останнім нулями
+        public int GetSumOfAbsBetweenZeros()
+        {
+            int firstZero = -1;
+            int lastZero = -1;
+
+            // Пошук першого нуля
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i] == 0)
+                {
+                    firstZero = i;
+                    break;
+                }
+            }
+
+            // Пошук останнього нуля
+            for (int i = data.Length - 1; i >= 0; i--)
+            {
+                if (data[i] == 0)
+                {
+                    lastZero = i;
+                    break;
+                }
+            }
+
+            // Перевірка наявності двох різних нулів
+            if (firstZero == -1 || lastZero == -1 || firstZero == lastZero)
+            {
+                Console.WriteLine("У масиві немає двох нульових елементів для обчислення.");
+                return 0;
+            }
+
+            int sum = 0;
+            for (int i = firstZero + 1; i < lastZero; i++)
+            {
+                sum += Math.Abs(data[i]);
+            }
+
+            return sum;
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            int n = GetValidInt("Введіть розмір масиву (n > 0): ", 1, 10000);
+            ArrayProcessor processor = new ArrayProcessor(n);
+
+            int choice = GetValidInt("Оберіть спосіб заповнення (1 - з клавіатури, 2 - випадково): ", 1, 2);
+
+            if (choice == 1)
+            {
+                processor.FillFromKeyboard();
+            }
+            else
+            {
+                processor.FillRandomly();
+            }
+
+            Console.WriteLine("\n--- Результати ---");
+            processor.PrintArray();
+
+            int maxIndex = processor.GetMaxElementIndex();
+            Console.WriteLine($"1) Номер (індекс) максимального елемента: {maxIndex} (Значення: {processor.GetMaxElementIndex()})");
+
+            int sum = processor.GetSumOfAbsBetweenZeros();
+            Console.WriteLine($"2) Сума модулів між першим та останнім нулями: {sum}");
+
+            Console.ReadKey();
+        }
+
+        // Допоміжний метод для перевірки введення чисел
+        static int GetValidInt(string prompt, int min, int max)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (int.TryParse(Console.ReadLine(), out int result) && result >= min && result <= max)
+                {
+                    return result;
+                }
+                Console.WriteLine("Помилка: введено некоректне значення або число поза допустимим діапазоном.");
+            }
+        }
+    }
+}

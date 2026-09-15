@@ -1,0 +1,64 @@
+using System;
+
+namespace Lab2Ex2
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Налаштування кодування для коректного виводу кирилиці
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            double a = 0.5;
+            double b = 4.5;
+            double dx = 0.4;
+
+            // 1. Реалізація через цикл з передумовою (while)
+            Console.WriteLine("Результати обчислення функції y = ln(x) на проміжку [{0}, {1}] з кроком {2} (цикл while):", a, b, dx);
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine("|       x        |     y = f(x)   |");
+            Console.WriteLine("----------------------------------");
+
+            double x = a;
+            // Додаємо 1e-9 для компенсації погрешності чисел з плаваючою крапкою (double)
+            while (x <= b + 1e-9)
+            {
+                if (x <= 0)
+                {
+                    Console.WriteLine($"| {x,14:F4} |   Невизначено  |");
+                }
+                else
+                {
+                    double y = Math.Log(x);
+                    Console.WriteLine($"| {x,14:F4} | {y,14:F4} |");
+                }
+                x += dx;
+            }
+            Console.WriteLine("----------------------------------\n");
+
+            // 2. Реалізація через цикл з післяумовою (do...while)
+            Console.WriteLine("Результати обчислення функції y = ln(x) на проміжку [{0}, {1}] з кроком {2} (цикл do...while):", a, b, dx);
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine("|       x        |     y = f(x)   |");
+            Console.WriteLine("----------------------------------");
+
+            x = a;
+            do
+            {
+                if (x <= 0)
+                {
+                    Console.WriteLine($"| {x,14:F4} |   Невизначено  |");
+                }
+                else
+                {
+                    double y = Math.Log(x);
+                    Console.WriteLine($"| {x,14:F4} | {y,14:F4} |");
+                }
+                x += dx;
+            } while (x <= b + 1e-9);
+
+            Console.WriteLine("----------------------------------");
+            Console.ReadKey();
+        }
+    }
+}
