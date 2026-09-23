@@ -13,52 +13,100 @@ namespace Lab2Ex2
             double b = 4.5;
             double dx = 0.4;
 
-            // 1. Реалізація через цикл з передумовою (while)
-            Console.WriteLine("Результати обчислення функції y = ln(x) на проміжку [{0}, {1}] з кроком {2} (цикл while):", a, b, dx);
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                ShowMenu();
+                string choice = Console.ReadLine();
+                Console.WriteLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        CalculateWithWhile(a, b, dx);
+                        break;
+
+                    case "2":
+                        CalculateWithDoWhile(a, b, dx);
+                        break;
+
+                    case "0":
+                        Console.WriteLine("Роботу програми завершено. До побачення!");
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Помилка: введено некоректний варіант. Спробуйте ще раз.");
+                        break;
+                }
+
+                Console.WriteLine("\n");
+            }
+        }
+
+        // Відображення меню
+        static void ShowMenu()
+        {
+            Console.WriteLine("=== Обчислити значення y = ln(x) на проміжку [0.5, 4.5] з кроком 0.4 ===");
+            Console.WriteLine("1 — Цикл while (з передумовою)");
+            Console.WriteLine("2 — Цикл do...while (з післяумовою)");
+            Console.WriteLine("0 — Вийти з програми");
+            Console.Write("Ваш вибір: ");
+        }
+
+        // Друк шапки таблиці
+        static void PrintTableHeader(string cycleType)
+        {
+            Console.WriteLine($"Результати обчислення ({cycleType}):");
             Console.WriteLine("----------------------------------");
             Console.WriteLine("|       x        |     y = f(x)   |");
             Console.WriteLine("----------------------------------");
+        }
+
+        // Обчислення значення функції та друк одного рядка
+        static void PrintTableRow(double x)
+        {
+            if (x <= 0)
+            {
+                Console.WriteLine($"| {x,14:F4} |   Невизначено  |");
+            }
+            else
+            {
+                double y = Math.Log(x);
+                Console.WriteLine($"| {x,14:F4} | {y,14:F4} |");
+            }
+        }
+
+        // Обчислення за допомогою циклу while
+        static void CalculateWithWhile(double a, double b, double dx)
+        {
+            PrintTableHeader("цикл while");
 
             double x = a;
-            // Додаємо 1e-9 для компенсації погрешності чисел з плаваючою крапкою (double)
+            // 1e-9 додається для компенсації похибки чисел з плаваючою крапкою
             while (x <= b + 1e-9)
             {
-                if (x <= 0)
-                {
-                    Console.WriteLine($"| {x,14:F4} |   Невизначено  |");
-                }
-                else
-                {
-                    double y = Math.Log(x);
-                    Console.WriteLine($"| {x,14:F4} | {y,14:F4} |");
-                }
+                PrintTableRow(x);
                 x += dx;
             }
-            Console.WriteLine("----------------------------------\n");
 
-            // 2. Реалізація через цикл з післяумовою (do...while)
-            Console.WriteLine("Результати обчислення функції y = ln(x) на проміжку [{0}, {1}] з кроком {2} (цикл do...while):", a, b, dx);
             Console.WriteLine("----------------------------------");
-            Console.WriteLine("|       x        |     y = f(x)   |");
-            Console.WriteLine("----------------------------------");
+        }
 
-            x = a;
+        // Обчислення за допомогою циклу do...while
+        static void CalculateWithDoWhile(double a, double b, double dx)
+        {
+            PrintTableHeader("цикл do...while");
+
+            double x = a;
             do
             {
-                if (x <= 0)
-                {
-                    Console.WriteLine($"| {x,14:F4} |   Невизначено  |");
-                }
-                else
-                {
-                    double y = Math.Log(x);
-                    Console.WriteLine($"| {x,14:F4} | {y,14:F4} |");
-                }
+                PrintTableRow(x);
                 x += dx;
             } while (x <= b + 1e-9);
 
             Console.WriteLine("----------------------------------");
-            Console.ReadKey();
         }
     }
 }
