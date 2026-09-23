@@ -9,50 +9,59 @@ namespace TramRoutesApp
             // Налаштування кодування для коректного відображення кирилиці в консолі
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            Console.Write("Введіть номер маршруту трамвая (від 1 до 9): ");
+            bool isRunning = true;
 
-            if (int.TryParse(Console.ReadLine(), out int routeNumber))
+            while (isRunning)
             {
-                switch (routeNumber)
+                Console.Write("Введіть номер маршруту трамвая (1-9) або 0 для виходу: ");
+
+                if (int.TryParse(Console.ReadLine(), out int routeNumber))
                 {
-                    case 1:
-                        Console.WriteLine("Маршрут №1: Залізничний вокзал — вул. Пасічна");
-                        break;
-                    case 2:
-                        Console.WriteLine("Маршрут №2: вул. Коновальця — вул. Пасічна");
-                        break;
-                    case 3:
-                        Console.WriteLine("Маршрут №3: вул. Замарстинівська — Аквапарк");
-                        break;
-                    case 4:
-                        Console.WriteLine("Маршрут №4: Залізничний вокзал — вул. Вернадського");
-                        break;
-                    case 5:
-                        Console.WriteLine("Маршрут №5: вул. Замарстинівська — вул. Промислова");
-                        break;
-                    case 6:
-                        Console.WriteLine("Маршрут №6: вул. Личаківська — вул. Миколайчука");
-                        break;
-                    case 7:
-                        Console.WriteLine("Маршрут №7: вул. Погулянка — вул. Шевченка");
-                        break;
-                    case 8:
-                        Console.WriteLine("Маршрут №8: пл. Соборна — вул. Вернадського");
-                        break;
-                    case 9:
-                        Console.WriteLine("Маршрут №9: Залізничний вокзал — вул. Торф'яна");
-                        break;
-                    default:
-                        Console.WriteLine("Помилка: введено номер поза діапазоном 1–9.");
-                        break;
+                    switch (routeNumber)
+                    {
+                        case 0:
+                            Console.WriteLine("Завершення роботи програми. До побачення!");
+                            isRunning = false; // Вихід з циклу
+                            break;
+                        case 1:
+                            Console.WriteLine("Маршрут №1: Залізничний вокзал — вул. Пасічна");
+                            break;
+                        case 2:
+                            Console.WriteLine("Маршрут №2: вул. Коновальця — вул. Пасічна");
+                            break;
+                        case 3:
+                            Console.WriteLine("Маршрут №3: вул. Замарстинівська — Аквапарк");
+                            break;
+                        case 4:
+                            Console.WriteLine("Маршрут №4: Залізничний вокзал — вул. Вернадського");
+                            break;
+                        case 5:
+                            Console.WriteLine("Маршрут №5: вул. Замарстинівська — вул. Промислова");
+                            break;
+                        case 6:
+                            Console.WriteLine("Маршрут №6: вул. Личаківська — вул. Миколайчука");
+                            break;
+                        case 7:
+                            Console.WriteLine("Маршрут №7: вул. Погулянка — вул. Шевченка");
+                            break;
+                        case 8:
+                            Console.WriteLine("Маршрут №8: пл. Соборна — вул. Вернадського");
+                            break;
+                        case 9:
+                            Console.WriteLine("Маршрут №9: Залізничний вокзал — вул. Торф'яна");
+                            break;
+                        default:
+                            Console.WriteLine("Помилка: введено номер поза діапазоном 1–9.");
+                            break;
+                    }
                 }
-            }
-            else
-            {
-                Console.WriteLine("Помилка: введено некоректне значення. Будь ласка, введіть ціле число.");
-            }
+                else
+                {
+                    Console.WriteLine("Помилка: введено некоректне значення. Будь ласка, введіть ціле число.");
+                }
 
-            Console.ReadKey();
+                Console.WriteLine(); // Відступ між запитами
+            }
         }
     }
 }
