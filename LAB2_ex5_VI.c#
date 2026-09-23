@@ -1,4 +1,5 @@
 using System;
+
 namespace Lab2Task5
 {
     class Program
@@ -7,11 +8,54 @@ namespace Lab2Task5
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            int n = GetValidInt("Введіть кількість рядків n (> 0): ", 1, 100);
+            bool repeat = true;
+
+            // Цикл повторного виконання всієї програми
+            while (repeat)
+            {
+                Console.Clear();
+                Console.WriteLine("=== ПРОГРАМА ОБРОБКИ ДВОВИМІРНОГО МАСИВУ (МАТРИЦІ) ===");
+
+                // Запуск одного сеансу виконання задачі
+                RunTask();
+
+                Console.WriteLine("\n-------------------------------------------");
+                int exitChoice = GetValidInt("Бажаєте виконати програму знову? (1 - Так, 0 - Вихід): ", 0, 1);
+
+                if (exitChoice == 0)
+                {
+                    repeat = false;
+                    Console.WriteLine("\nРоботу програми завершено. Натисніть будь-яку клавішу...");
+                    Console.ReadKey();
+                }
+            }
+        }
+
+        // Функція виконання одного сеансу роботи з матрицею
+        static void RunTask()
+        {
+            int n = GetValidInt("\nВведіть кількість рядків n (> 0): ", 1, 100);
             int m = GetValidInt("Введіть кількість стовпців m (> 0): ", 1, 100);
 
             int[,] A = new int[n, m];
 
+            // Вибір та виклик способу заповнення
+            FillMatrixMenu(A, n, m);
+
+            // Виведення початкової матриці
+            PrintMatrix(A, n, m);
+
+            // Обчислення найбільших елементів рядків та їх суми
+            int[] rowMaxes = GetRowMaxes(A, n, m);
+            int totalSum = CalculateSum(rowMaxes);
+
+            // Виведення результатів
+            DisplayResults(rowMaxes, totalSum);
+        }
+
+        // Меню вибору способу заповнення матриці
+        static void FillMatrixMenu(int[,] A, int n, int m)
+        {
             int choice = GetValidInt("\nОберіть спосіб заповнення (1 - з клавіатури, 2 - випадковими числами): ", 1, 2);
 
             if (choice == 1)
@@ -22,13 +66,12 @@ namespace Lab2Task5
             {
                 FillRandomly(A, n, m);
             }
+        }
 
-            // Виведення початкової матриці
-            PrintMatrix(A, n, m);
-
-            // Знаходження суми найбільших елементів для кожного рядка
-            int totalSum = 0;
-            Console.WriteLine("\n--- Проміжні результати (максимуми в кожному рядку) ---");
+        // Функція пошуку найбільшого елемента у кожному рядку
+        static int[] GetRowMaxes(int[,] A, int n, int m)
+        {
+            int[] maxes = new int[n];
             for (int i = 0; i < n; i++)
             {
                 int maxInRow = A[i, 0];
@@ -39,15 +82,33 @@ namespace Lab2Task5
                         maxInRow = A[i, j];
                     }
                 }
-                Console.WriteLine($"Рядок {i + 1}: найбільший елемент = {maxInRow}");
-                totalSum += maxInRow;
+                maxes[i] = maxInRow;
+            }
+            return maxes;
+        }
+
+        // Функція підрахунку суми елементів одновимірного масиву
+        static int CalculateSum(int[] numbers)
+        {
+            int sum = 0;
+            foreach (int val in numbers)
+            {
+                sum += val;
+            }
+            return sum;
+        }
+
+        // Функція виведення проміжних та кінцевих результатів
+        static void DisplayResults(int[] rowMaxes, int totalSum)
+        {
+            Console.WriteLine("\n--- Проміжні результати (максимуми в кожному рядку) ---");
+            for (int i = 0; i < rowMaxes.Length; i++)
+            {
+                Console.WriteLine($"Рядок {i + 1}: найбільший елемент = {rowMaxes[i]}");
             }
 
-            // Кінцевий результат
             Console.WriteLine("\n--- Кінцевий результат ---");
             Console.WriteLine($"Сума найбільших елементів усіх рядків: {totalSum}");
-
-            Console.ReadKey();
         }
 
         // Заповнення з клавіатури із перевіркою типу даних
@@ -66,17 +127,17 @@ namespace Lab2Task5
         // Заповнення випадковими числами з відрізка [-100; 100]
         static void FillRandomly(int[,] A, int n, int m)
         {
-            Random rnd = new Random(); // використання класу Random
+            Random rnd = new Random();
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < m; j++)
                 {
-                    A[i, j] = rnd.Next(-100, 101); // діапазон [-100; 100]
+                    A[i, j] = rnd.Next(-100, 101);
                 }
             }
         }
 
-        // Красиве виведення двовимірного масиву у вигляді таблиці
+        // Виведення двовимірного масиву у вигляді таблиці
         static void PrintMatrix(int[,] A, int n, int m)
         {
             Console.WriteLine("\n--- Початкова матриця A ---");
