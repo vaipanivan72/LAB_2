@@ -2,42 +2,42 @@ using System;
 
 namespace Lab2Task3
 {
-    // Клас для обробки масиву (ООП підхід)
-    class ArrayProcessor
+    /// <summary>
+    /// Клас для обробки одновимірного масиву (ООП підхід)
+    /// </summary>
+    public class ArrayProcessor
     {
         private int[] data;
 
+        // Конструктор за розміром
         public ArrayProcessor(int n)
         {
             data = new int[n];
         }
 
-        // А) Заповнення масиву з клавіатури із захистом від некоректного введення
+        // Конструктор для тестування (приймає готовий масив)
+        public ArrayProcessor(int[] initialData)
+        {
+            data = initialData;
+        }
+
+        // --- МЕТОДИ ЗАПОВНЕННЯ ТА ВИВЕДЕННЯ ---
+
         public void FillFromKeyboard()
         {
-            Console.WriteLine("Введіть елементи масиву:");
+            Console.WriteLine("\nВведіть елементи масиву:");
             for (int i = 0; i < data.Length; i++)
             {
-                while (true)
-                {
-                    Console.Write($"Елемент [{i}]: ");
-                    if (int.TryParse(Console.ReadLine(), out int value))
-                    {
-                        data[i] = value;
-                        break;
-                    }
-                    Console.WriteLine("Помилка: введено некоректні дані. Введіть ціле число.");
-                }
+                Console.Write($"Елемент [{i}]: ");
+                data[i] = int.Parse(Console.ReadLine());
             }
         }
 
-        // Б) Заповнення масиву випадковими числами
         public void FillRandomly()
         {
             Random rnd = new Random();
             for (int i = 0; i < data.Length; i++)
             {
-                // Генерація в діапазоні [-100; 100]
                 data[i] = rnd.Next(-100, 101);
             }
         }
@@ -47,11 +47,10 @@ namespace Lab2Task3
             Console.WriteLine("Масив: " + string.Join(", ", data));
         }
 
-        // 1. Знаходження номера (індексу) максимального елемента
+        // --- МЕТОДИ ДЛЯ ПОШУКУ МАКСИМАЛЬНОГО ЕЛЕМЕНТА ---
+
         public int GetMaxElementIndex()
         {
-            if (data.Length == 0) return -1;
-
             int maxIndex = 0;
             for (int i = 1; i < data.Length; i++)
             {
@@ -63,46 +62,53 @@ namespace Lab2Task3
             return maxIndex;
         }
 
-        // 2. Знаходження суми модулів елементів між першим і останнім нулями
-        public int GetSumOfAbsBetweenZeros()
+        public int GetMaxElementValue()
         {
-            int firstZero = -1;
-            int lastZero = -1;
+            int maxIndex = GetMaxElementIndex();
+            return data[maxIndex];
+        }
 
-            // Пошук першого нуля
+        // --- ДОПОМІЖНІ МЕТОДИ ДЛЯ ОБЧИСЛЕННЯ СУМИ МІЖ НУЛЯМИ ---
+
+        public int FindFirstZeroIndex()
+        {
             for (int i = 0; i < data.Length; i++)
             {
-                if (data[i] == 0)
-                {
-                    firstZero = i;
-                    break;
-                }
+                if (data[i] == 0) return i;
             }
+            return -1;
+        }
 
-            // Пошук останнього нуля
+        public int FindLastZeroIndex()
+        {
             for (int i = data.Length - 1; i >= 0; i--)
             {
-                if (data[i] == 0)
-                {
-                    lastZero = i;
-                    break;
-                }
+                if (data[i] == 0) return i;
             }
+            return -1;
+        }
 
-            // Перевірка наявності двох різних нулів
-            if (firstZero == -1 || lastZero == -1 || firstZero == lastZero)
-            {
-                Console.WriteLine("У масиві немає двох нульових елементів для обчислення.");
-                return 0;
-            }
-
+        public int CalculateAbsSumBetweenIndices(int start, int end)
+        {
             int sum = 0;
-            for (int i = firstZero + 1; i < lastZero; i++)
+            for (int i = start + 1; i < end; i++)
             {
                 sum += Math.Abs(data[i]);
             }
-
             return sum;
+        }
+
+        public int GetSumOfAbsBetweenZeros()
+        {
+            int firstZero = FindFirstZeroIndex();
+            int lastZero = FindLastZeroIndex();
+
+            if (firstZero == -1 || lastZero == -1 || firstZero >= lastZero)
+            {
+                return -1;
+            }
+
+            return CalculateAbsSumBetweenIndices(firstZero, lastZero);
         }
     }
 
@@ -110,13 +116,44 @@ namespace Lab2Task3
     {
         static void Main(string[] args)
         {
+            // Налаштування кодування для коректного відображення української мови (і, ї, є)
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            int n = GetValidInt("Введіть розмір масиву (n > 0): ", 1, 10000);
+            bool repeat = true;
+            while (repeat)
+            {
+                RunTask();
+                repeat = AskForRepeat();
+                Console.WriteLine();
+            }
+        }
+
+        // Головна функція виконання одного циклу завдання
+        static void RunTask()
+        {
+            int n = ReadInt("Введіть розмір масиву n: ");
             ArrayProcessor processor = new ArrayProcessor(n);
 
-            int choice = GetValidInt("Оберіть спосіб заповнення (1 - з клавіатури, 2 - випадково): ", 1, 2);
+            FillArrayMenu(processor);
 
+            Console.WriteLine("\n--- Результати ---");
+            processor.PrintArray();
+
+            DisplayMaxElementInfo(processor);
+            DisplaySumBetweenZerosInfo(processor);
+        }
+
+        // Допоміжна функція для зчитування цілого числа
+        static int ReadInt(string prompt)
+        {
+            Console.Write(prompt);
+            return int.Parse(Console.ReadLine());
+        }
+
+        // Функція керування вибором способу заповнення
+        static void FillArrayMenu(ArrayProcessor processor)
+        {
+            int choice = ReadInt("Спосіб заповнення (1 - з клавіатури, 2 - випадкові числа): ");
             if (choice == 1)
             {
                 processor.FillFromKeyboard();
@@ -125,31 +162,35 @@ namespace Lab2Task3
             {
                 processor.FillRandomly();
             }
-
-            Console.WriteLine("\n--- Результати ---");
-            processor.PrintArray();
-
-            int maxIndex = processor.GetMaxElementIndex();
-            Console.WriteLine($"1) Номер (індекс) максимального елемента: {maxIndex} (Значення: {processor.GetMaxElementIndex()})");
-
-            int sum = processor.GetSumOfAbsBetweenZeros();
-            Console.WriteLine($"2) Сума модулів між першим та останнім нулями: {sum}");
-
-            Console.ReadKey();
         }
 
-        // Допоміжний метод для перевірки введення чисел
-        static int GetValidInt(string prompt, int min, int max)
+        // Функція виведення інформації про максимальний елемент
+        static void DisplayMaxElementInfo(ArrayProcessor processor)
         {
-            while (true)
+            int maxIndex = processor.GetMaxElementIndex();
+            int maxValue = processor.GetMaxElementValue();
+            Console.WriteLine($"1) Номер (індекс) максимального елемента: {maxIndex} (Значення: {maxValue})");
+        }
+
+        // Функція виведення суми між нулями
+        static void DisplaySumBetweenZerosInfo(ArrayProcessor processor)
+        {
+            int sum = processor.GetSumOfAbsBetweenZeros();
+            if (sum != -1)
             {
-                Console.Write(prompt);
-                if (int.TryParse(Console.ReadLine(), out int result) && result >= min && result <= max)
-                {
-                    return result;
-                }
-                Console.WriteLine("Помилка: введено некоректне значення або число поза допустимим діапазоном.");
+                Console.WriteLine($"2) Сума модулів між першим та останнім нулями: {sum}");
             }
+            else
+            {
+                Console.WriteLine("2) У масиві немає двох нулів для обчислення суми.");
+            }
+        }
+
+        // Функція запиту на повторення програми
+        static bool AskForRepeat()
+        {
+            int exitChoice = ReadInt("\nБажаєте виконати програму знову? (1 - Так, 0 - Вихід): ");
+            return exitChoice == 1;
         }
     }
 }
