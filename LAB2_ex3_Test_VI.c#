@@ -1,0 +1,54 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Lab2Task3; // Підключаємо простір імен вашого основного проєкту
+
+namespace Lab2Task3.Tests
+{
+    [TestClass]
+    public class ArrayProcessorTests
+    {
+        // Тест 1: Перевірка пошуку індексу максимального елемента
+        [TestMethod]
+        public void GetMaxElementIndex_ValidArray_ReturnsCorrectIndex()
+        {
+            // Arrange (Підготовка даних)
+            int[] testData = { -5, 0, 10, -15, 3, 0, 8 };
+            ArrayProcessor processor = new ArrayProcessor(testData);
+
+            // Act (Виконання дії)
+            int actualIndex = processor.GetMaxElementIndex();
+
+            // Assert (Перевірка результату: 10 знаходиться під індексом 2)
+            Assert.AreEqual(2, actualIndex);
+        }
+
+        // Тест 2: Перевірка обчислення суми модулів між нулями (Контрольний приклад)
+        [TestMethod]
+        public void GetSumOfAbsBetweenZeros_ArrayWithTwoZeros_ReturnsCorrectSum()
+        {
+            // Arrange (Масив із контрольного прикладу: |10| + |-15| + |3| = 28)
+            int[] testData = { -5, 0, 10, -15, 3, 0, 8 };
+            ArrayProcessor processor = new ArrayProcessor(testData);
+
+            // Act
+            int actualSum = processor.GetSumOfAbsBetweenZeros();
+
+            // Assert
+            Assert.AreEqual(28, actualSum);
+        }
+
+        // Тест 3: Граничний випадок — у масиві немає нулів
+        [TestMethod]
+        public void GetSumOfAbsBetweenZeros_NoZeros_ReturnsMinusOne()
+        {
+            // Arrange
+            int[] testData = { 1, 2, 3, 4, 5 };
+            ArrayProcessor processor = new ArrayProcessor(testData);
+
+            // Act
+            int actualSum = processor.GetSumOfAbsBetweenZeros();
+
+            // Assert (Повинно повернути -1)
+            Assert.AreEqual(-1, actualSum);
+        }
+    }
+}
